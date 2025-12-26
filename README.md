@@ -111,4 +111,3 @@ Contributions are welcome! Please ensure templates remain:
 ## License
 
 ISC
-# node-templates

@@ -1,0 +1,31 @@
+{
+  "name": "create-pg-service",
+  "version": "1.0.0",
+  "description": "Node.js service templates with TypeScript and Hono",
+  "type": "module",
+  "bin": {
+    "create-service": "./bin/create-service.js"
+  },
+  "scripts": {
+    "test": "echo \"Template repository - no tests to run\""
+  },
+  "keywords": [
+    "template",
+    "scaffold",
+    "generator",
+    "nodejs",
+    "typescript",
+    "hono",
+    "postgresql"
+  ],
+  "author": "{{AUTHOR}}",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cressie176/node-templates.git"
+  },
+  "files": [
+    "templates",
+    "bin"
+  ]
+}
