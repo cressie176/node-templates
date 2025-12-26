@@ -113,15 +113,9 @@ export default function createStatusRoutes({ postgres }: { postgres: Postgres })
 
 ### 4. Update `index.ts`
 
-**Add imports:**
+**Add import:**
 ```typescript
 import Postgres from './src/infra/Postgres.js';
-import initMigrations from './src/init/init-migrations.js';
-```
-
-**After initLogging:**
-```typescript
-await initMigrations(config.postgres);
 ```
 
 **Instantiate postgres:**
@@ -152,3 +146,16 @@ docker compose down
 ## Configuration
 
 Postgres config has been merged into `config/*.json` files.
+
+### Migration Strategy
+
+**Local development:**
+- Migrations run automatically on application start for convenience
+- Configured in `config/local.json` with `migrations.apply: true`
+
+**Production/staging environments:**
+- Migrations should ideally NOT run on application start
+- Long-running migrations (indexes, columns with defaults) can block health checks and cause rollbacks
+- Ideally run migrations pre-deployment using: `npm run db:migrate`
+- This runs the `bin/migrate.ts` script which applies migrations then exits
+- Default config has `migrations.apply: false`

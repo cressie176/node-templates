@@ -56,7 +56,6 @@ async function gatherValues(packageJson) {
 
   const values = {};
 
-  // Get service name from existing package.json
   values.SERVICE_NAME = packageJson.name || 'my-service';
 
   values.PG_HOST = await prompt(PG_PLACEHOLDERS.PG_HOST, 'localhost');
@@ -105,12 +104,15 @@ To complete integration, update these files:
    - Test postgres in health check: await Promise.all([postgres.test()])
 
 4. index.ts
-   - Add imports for Postgres and initMigrations
-   - After initLogging: await initMigrations(config.postgres);
+   - Add import: import Postgres from './src/infra/Postgres.js';
    - Instantiate: const postgres = new Postgres({ config: config.postgres });
    - Pass to WebServer and Application
 
 See WIRING.md for detailed examples.
+
+Migrations:
+  - Local: Run automatically on app start (config/local.json)
+  - Production: Run pre-deployment with 'npm run db:migrate'
 
 Start postgres: docker compose up -d postgres
 `);
