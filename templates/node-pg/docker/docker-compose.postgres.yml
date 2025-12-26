@@ -2,7 +2,7 @@ services:
   postgres:
     build:
       context: .
-      dockerfile: docker/Dockerfile.postgres
+      dockerfile: Dockerfile.postgres
     container_name: {{SERVICE_NAME}}-db
     environment:
       POSTGRES_USER: {{PG_USER}}
@@ -28,7 +28,7 @@ services:
   postgres-test:
     build:
       context: .
-      dockerfile: docker/Dockerfile.postgres
+      dockerfile: Dockerfile.postgres
     container_name: {{SERVICE_NAME}}-db-test
     environment:
       POSTGRES_USER: {{PG_USER}}

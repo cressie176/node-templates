@@ -10,6 +10,7 @@
     "@types/pg": "^8.16.0"
   },
   "scripts": {
-    "db:migrate": "node --import tsx --eval \"import('./src/init/init-migrations.js')\""
+    "pg:migrate": "node --import tsx --eval \"import('./src/init/init-migrations.js')\"",
+    "pg:start": "docker-compose -f docker/docker-compose.postgres.yml --profile test start"
   }
 }

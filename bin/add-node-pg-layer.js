@@ -112,7 +112,7 @@ See WIRING.md for detailed examples.
 
 Migrations:
   - Local: Run automatically on app start (config/local.json)
-  - Production: Run pre-deployment with 'npm run db:migrate'
+  - Production: Run pre-deployment with 'npm run pg:migrate'
 
 Start postgres: docker compose up -d postgres
 `);
@@ -176,7 +176,7 @@ async function main() {
 Next steps:
   1. Follow the wiring instructions above
   2. Start postgres: docker compose up -d postgres
-  3. Run migrations: npm run db:migrate
+  3. Run migrations: npm run pg:migrate
   4. Update your code to use the Postgres infrastructure
 
 Happy coding! 🎉

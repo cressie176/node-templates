@@ -139,7 +139,7 @@ See `test/infra/Postgres.test.ts` for a complete example of testing with the pos
 ```bash
 docker compose up -d postgres
 docker compose --profile test up -d postgres-test
-npm run db:migrate
+npm run pg:migrate
 docker compose down
 ```
 
@@ -156,6 +156,6 @@ Postgres config has been merged into `config/*.json` files.
 **Production/staging environments:**
 - Migrations should ideally NOT run on application start
 - Long-running migrations (indexes, columns with defaults) can block health checks and cause rollbacks
-- Ideally run migrations pre-deployment using: `npm run db:migrate`
+- Ideally run migrations pre-deployment using: `npm run pg:migrate`
 - This runs the `bin/migrate.ts` script which applies migrations then exits
 - Default config has `migrations.apply: false`
