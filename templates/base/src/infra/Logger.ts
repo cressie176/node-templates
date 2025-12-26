@@ -11,7 +11,7 @@ export enum LogLevel {
 }
 
 const asyncLocalStorage = new AsyncLocalStorage<Record<string, any>>();
-let suppress = false;
+let suppressed = false;
 
 export const logger = {
   trace: (message: string, context?: any): void => {
@@ -36,17 +36,17 @@ export const logger = {
     return asyncLocalStorage.run(context, fn);
   },
   suppress: async <T>(fn: () => T | Promise<T>): Promise<T> => {
-    suppress = true;
+    suppressed = true;
     try {
       return await fn();
     } finally {
-      suppress = false;
+      suppressed = false;
     }
   },
 };
 
 function log(level: LogLevel, message: string, context: any = {}): void {
-  if (suppress) return;
+  if (suppressed) return;
   const store = asyncLocalStorage.getStore() || {};
   (process as any).emit(ApplicationEvents.LOG, { level, message, context: { ...store, ...context } });
 }
