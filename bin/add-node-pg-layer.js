@@ -25,25 +25,26 @@ const PG_PLACEHOLDERS = {
   PG_CONNECTION_TIMEOUT: 'Connection timeout (ms)',
 };
 
-async function checkBaseService() {
+async function checkBaseService(targetDir) {
   const requiredFiles = ['package.json', 'src', 'config'];
 
   for (const file of requiredFiles) {
     try {
-      await access(file);
+      await access(join(targetDir, file));
     } catch {
-      console.error(`\n❌ Error: This command must be run from a base service directory`);
+      console.error(`\n❌ Error: Not a valid base service directory`);
+      console.error(`Directory: ${targetDir}`);
       console.error(`Missing: ${file}`);
-      console.error(`\nPlease cd into your service directory first, or create a base service with:`);
+      console.error(`\nPlease specify a valid base service directory, or create one with:`);
       console.error(`  npx github:cressie176/node-templates\n`);
       process.exit(1);
     }
   }
 }
 
-async function readExistingPackageJson() {
+async function readExistingPackageJson(targetDir) {
   try {
-    const content = await readFile('package.json', 'utf8');
+    const content = await readFile(join(targetDir, 'package.json'), 'utf8');
     return JSON.parse(content);
   } catch (error) {
     console.error(`\n❌ Error reading package.json: ${error.message}`);
@@ -121,13 +122,15 @@ Start postgres: docker compose up -d postgres
 async function main() {
   console.log('🔧 Add PostgreSQL Layer to Base Service\n');
 
-  await checkBaseService();
+  const targetDirInput = await prompt('Base service directory', '.');
+  const targetDir = resolve(process.cwd(), targetDirInput);
 
-  const packageJson = await readExistingPackageJson();
+  await checkBaseService(targetDir);
+
+  const packageJson = await readExistingPackageJson(targetDir);
   console.log(`\n📦 Adding PostgreSQL layer to: ${packageJson.name}`);
 
   const values = await gatherValues(packageJson);
-  const targetDir = process.cwd();
 
   try {
     const pgPath = join(TEMPLATES_DIR, 'node-pg');
