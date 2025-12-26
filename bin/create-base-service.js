@@ -43,7 +43,7 @@ async function main() {
 
   const values = await gatherValues();
   const targetDirInput = await prompt('Target directory', '.');
-  const targetDir = resolve(process.cwd(), targetDirInput, values.SERVICE_NAME);
+  const targetDir = resolve(process.cwd(), targetDirInput);
 
   console.log(`\n📁 Creating service in: ${targetDir}`);
 
