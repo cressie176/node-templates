@@ -18,6 +18,7 @@ describe('Postgres', () => {
   });
 
   afterEach(async () => {
+    await postgres.start();
     await postgres.nuke();
   });
 
@@ -52,7 +53,7 @@ describe('Postgres', () => {
     await postgres.start();
 
     await postgres.withClient(async (client) => {
-      await client.query('CREATE TABLE test_table (id SERIAL PRIMARY KEY, value TEXT)');
+      await client.query('CREATE TABLE IF NOT EXISTS test_table (id SERIAL PRIMARY KEY, value TEXT)');
       await client.query('INSERT INTO test_table (value) VALUES ($1)', ['test']);
     });
 
@@ -69,6 +70,10 @@ describe('Postgres', () => {
       return Number.parseInt(res.rows[0].count, 10);
     });
     eq(afterNuke, 0);
+
+    await postgres.withClient(async (client) => {
+      await client.query('DROP TABLE IF EXISTS test_table CASCADE');
+    });
 
     await postgres.stop();
   });
