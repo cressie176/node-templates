@@ -1,6 +1,6 @@
 {
   "server": {
-    "port": 0
+    "port": {{SERVER_PORT_TEST}}
   },
   "logging": {
     "level": "error"

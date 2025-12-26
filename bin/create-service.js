@@ -67,8 +67,10 @@ async function gatherValues() {
   values.AUTHOR = await prompt(PLACEHOLDERS.AUTHOR, process.env.USER || 'Unknown');
   values.LICENSE = await prompt(PLACEHOLDERS.LICENSE, 'ISC');
   values.SERVER_PORT = await prompt(PLACEHOLDERS.SERVER_PORT, '3000');
-  values.LOG_LEVEL = await prompt(PLACEHOLDERS.LOG_LEVEL, 'info');
-  values.NODE_VERSION = await prompt(PLACEHOLDERS.NODE_VERSION, '>=18.0.0');
+  values.NODE_VERSION = await prompt(PLACEHOLDERS.NODE_VERSION, '>=22.0.0');
+
+  // Calculate test port as main port + 1
+  values.SERVER_PORT_TEST = String(Number.parseInt(values.SERVER_PORT, 10) + 1);
 
   return values;
 }
