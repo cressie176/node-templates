@@ -9,12 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 async function selectTemplate() {
-  console.log('🚀 Create Node.js Service\n');
-  console.log('Available templates:\n');
-  console.log('  1. Base service - Simple Node.js/TypeScript service with Hono');
-  console.log('  2. PostgreSQL service - Base service + PostgreSQL database layer\n');
+  console.log('🚀 Node.js Service Templates\n');
+  console.log('Available options:\n');
+  console.log('  1. Create base service - Simple Node.js/TypeScript service with Hono');
+  console.log('  2. Add PostgreSQL layer - Add PostgreSQL to an existing base service\n');
 
-  const selection = await prompt('Select template', '1');
+  const selection = await prompt('Select option', '1');
   const choice = Number.parseInt(selection, 10);
 
   if (choice < 1 || choice > 2) {

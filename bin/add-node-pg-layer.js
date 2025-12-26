@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { access } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { prompt } from './lib/prompt.js';
@@ -11,16 +11,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const TEMPLATES_DIR = resolve(__dirname, '../templates');
-
-const BASE_PLACEHOLDERS = {
-  SERVICE_NAME: 'Service name (package name)',
-  SERVICE_DESCRIPTION: 'Service description',
-  AUTHOR: 'Author name',
-  LICENSE: 'License',
-  SERVER_PORT: 'Server port',
-  SERVER_PORT_TEST: 'Test server port',
-  NODE_VERSION: 'Node.js version requirement',
-};
 
 const PG_PLACEHOLDERS = {
   PG_HOST: 'PostgreSQL host',
@@ -35,20 +25,40 @@ const PG_PLACEHOLDERS = {
   PG_CONNECTION_TIMEOUT: 'Connection timeout (ms)',
 };
 
-async function gatherValues() {
-  console.log('\nEnter values for template placeholders:\n');
+async function checkBaseService() {
+  const requiredFiles = ['package.json', 'src', 'config'];
+
+  for (const file of requiredFiles) {
+    try {
+      await access(file);
+    } catch {
+      console.error(`\n❌ Error: This command must be run from a base service directory`);
+      console.error(`Missing: ${file}`);
+      console.error(`\nPlease cd into your service directory first, or create a base service with:`);
+      console.error(`  npx github:cressie176/node-templates\n`);
+      process.exit(1);
+    }
+  }
+}
+
+async function readExistingPackageJson() {
+  try {
+    const content = await readFile('package.json', 'utf8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error(`\n❌ Error reading package.json: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+async function gatherValues(packageJson) {
+  console.log('\nPostgreSQL configuration:\n');
 
   const values = {};
 
-  values.SERVICE_NAME = await prompt(BASE_PLACEHOLDERS.SERVICE_NAME, 'my-service');
-  values.SERVICE_DESCRIPTION = await prompt(BASE_PLACEHOLDERS.SERVICE_DESCRIPTION, 'A Node.js service');
-  values.AUTHOR = await prompt(BASE_PLACEHOLDERS.AUTHOR, process.env.USER || 'Unknown');
-  values.LICENSE = await prompt(BASE_PLACEHOLDERS.LICENSE, 'ISC');
-  values.SERVER_PORT = await prompt(BASE_PLACEHOLDERS.SERVER_PORT, '3000');
-  values.SERVER_PORT_TEST = await prompt(BASE_PLACEHOLDERS.SERVER_PORT_TEST, '3001');
-  values.NODE_VERSION = await prompt(BASE_PLACEHOLDERS.NODE_VERSION, '>=22.0.0');
+  // Get service name from existing package.json
+  values.SERVICE_NAME = packageJson.name || 'my-service';
 
-  console.log('\nPostgreSQL configuration:\n');
   values.PG_HOST = await prompt(PG_PLACEHOLDERS.PG_HOST, 'localhost');
   values.PG_PORT = await prompt(PG_PLACEHOLDERS.PG_PORT, '5432');
   values.PG_PORT_TEST = await prompt(PG_PLACEHOLDERS.PG_PORT_TEST, '5433');
@@ -74,7 +84,7 @@ The following files have been added:
   - test-src/TestPostgres.ts
   - test/infra/Postgres.test.ts
   - docker/Dockerfile.postgres
-  - docker/docker-compose.postgres.yml
+  - docker/docker-compose.yml (merged)
 
 To complete integration, update these files:
 
@@ -107,22 +117,22 @@ Start postgres: docker compose up -d postgres
 }
 
 async function main() {
-  console.log('🚀 Create Node.js Service with PostgreSQL (extends base)\n');
+  console.log('🔧 Add PostgreSQL Layer to Base Service\n');
 
-  const values = await gatherValues();
-  const targetDir = resolve(process.cwd(), values.SERVICE_NAME);
+  await checkBaseService();
 
-  console.log(`\n📁 Creating service in: ${targetDir}`);
+  const packageJson = await readExistingPackageJson();
+  console.log(`\n📦 Adding PostgreSQL layer to: ${packageJson.name}`);
+
+  const values = await gatherValues(packageJson);
+  const targetDir = process.cwd();
 
   try {
-    console.log('📦 Applying base template');
-    const basePath = join(TEMPLATES_DIR, 'base');
-    await copyDirectory(basePath, targetDir, values);
-
-    console.log('📦 Applying node-pg template layer');
+    console.log('\n📦 Adding node-pg template files');
     const pgPath = join(TEMPLATES_DIR, 'node-pg');
     await copyDirectory(pgPath, targetDir, values);
 
+    console.log('📦 Merging package.json dependencies');
     const packageJsonPath = join(targetDir, 'package.json');
     const layerPackageJsonPath = join(pgPath, 'package.json');
     try {
@@ -130,6 +140,7 @@ async function main() {
       await mergeJsonFiles(packageJsonPath, layerPackageJsonPath, values);
     } catch {}
 
+    console.log('📦 Merging configuration files');
     for (const configFile of ['default.json', 'local.json', 'test.json']) {
       const targetConfigPath = join(targetDir, 'config', configFile);
       const sourceConfigPath = join(pgPath, 'config', configFile);
@@ -139,6 +150,7 @@ async function main() {
       } catch {}
     }
 
+    console.log('📦 Merging docker-compose.yml');
     const targetDockerCompose = join(targetDir, 'docker', 'docker-compose.yml');
     const sourceDockerCompose = join(pgPath, 'docker', 'docker-compose.node-pg.yml');
     try {
@@ -146,24 +158,20 @@ async function main() {
       await mergeYamlFiles(targetDockerCompose, sourceDockerCompose);
     } catch {}
 
-    console.log('✅ Template copied successfully\n');
+    console.log('\n✅ PostgreSQL layer added successfully\n');
 
-    console.log('📦 Installing dependencies...');
+    console.log('📦 Installing new dependencies...');
     await runCommand('npm', ['install'], targetDir);
-
-    console.log('\n🔧 Initializing git...');
-    await runCommand('git', ['init'], targetDir);
-
-    console.log('🪝 Installing git hooks...');
-    await runCommand('npx', ['lefthook', 'install'], targetDir);
 
     outputWiringInstructions();
 
-    console.log(`\n✨ Service created successfully!
+    console.log(`\n✨ PostgreSQL layer added!
 
 Next steps:
-  cd ${values.SERVICE_NAME}
-  npm run dev
+  1. Follow the wiring instructions above
+  2. Start postgres: docker compose up -d postgres
+  3. Run migrations: npm run db:migrate
+  4. Update your code to use the Postgres infrastructure
 
 Happy coding! 🎉
 `);
