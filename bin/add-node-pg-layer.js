@@ -109,6 +109,16 @@ To complete integration, update these files:
    - Instantiate: const postgres = new Postgres({ config: config.postgres });
    - Pass to WebServer and Application
 
+5. test/infra/Application.test.ts
+   - Add import: import TestPostgres from '../../test-src/TestPostgres.js';
+   - Instantiate: const postgres = new TestPostgres({ config: config.postgres });
+   - Pass postgres to WebServer and Application
+
+6. test/routes/status.test.ts
+   - Add import: import TestPostgres from '../../test-src/TestPostgres.js';
+   - Instantiate: const postgres = new TestPostgres({ config: config.postgres });
+   - Pass postgres to WebServer
+
 See WIRING.md for detailed examples.
 
 Migrations:
