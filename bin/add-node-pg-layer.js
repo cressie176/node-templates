@@ -20,7 +20,6 @@ const BASE_PLACEHOLDERS = {
   SERVER_PORT: 'Server port',
   SERVER_PORT_TEST: 'Test server port',
   NODE_VERSION: 'Node.js version requirement',
-  LOG_LEVEL: 'Log level',
 };
 
 const PG_PLACEHOLDERS = {
@@ -47,7 +46,6 @@ async function gatherValues() {
   values.LICENSE = await prompt(BASE_PLACEHOLDERS.LICENSE, 'ISC');
   values.SERVER_PORT = await prompt(BASE_PLACEHOLDERS.SERVER_PORT, '3000');
   values.SERVER_PORT_TEST = await prompt(BASE_PLACEHOLDERS.SERVER_PORT_TEST, '3001');
-  values.LOG_LEVEL = await prompt(BASE_PLACEHOLDERS.LOG_LEVEL, 'info');
   values.NODE_VERSION = await prompt(BASE_PLACEHOLDERS.NODE_VERSION, '>=22.0.0');
 
   console.log('\nPostgreSQL configuration:\n');
