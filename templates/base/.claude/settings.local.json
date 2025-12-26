@@ -1,0 +1,24 @@
+{
+  "allowedTools": {
+    "WebFetch": {
+      "hosts": ["github.com"]
+    },
+    "Bash": {
+      "commands": [
+        "docker",
+        "docker-compose",
+        "npm",
+        "eza",
+        "bat",
+        "fd",
+        "rg",
+        "jq",
+        "yq",
+        "gh",
+        "hyperfine",
+        "tokei",
+        "parallel"
+      ]
+    }
+  }
+}
