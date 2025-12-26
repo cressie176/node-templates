@@ -1,0 +1,8 @@
+{
+  "postgres": {
+    "port": {{PG_PORT_TEST}},
+    "migrations": {
+      "apply": true
+    }
+  }
+}

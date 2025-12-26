@@ -4,7 +4,8 @@
   "description": "Node.js service templates with TypeScript and Hono",
   "type": "module",
   "bin": {
-    "create-service": "./bin/create-service.js"
+    "create-base-service": "./bin/create-base-service.js",
+    "add-node-pg-layer": "./bin/add-node-pg-layer.js"
   },
   "scripts": {
     "test": "echo \"Template repository - no tests to run\""

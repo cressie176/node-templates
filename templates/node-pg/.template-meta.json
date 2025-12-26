@@ -1,0 +1,4 @@
+{
+  "extends": "base",
+  "description": "PostgreSQL database layer with migrations and Docker setup"
+}

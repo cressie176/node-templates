@@ -1,0 +1,18 @@
+{
+  "postgres": {
+    "host": "{{PG_HOST}}",
+    "port": {{PG_PORT}},
+    "database": "{{PG_NAME}}",
+    "user": "{{PG_USER}}",
+    "password": "{{PG_PASSWORD}}",
+    "min": {{PG_POOL_MIN}},
+    "max": {{PG_POOL_MAX}},
+    "idleTimeoutMillis": {{PG_IDLE_TIMEOUT}},
+    "connectionTimeoutMillis": {{PG_CONNECTION_TIMEOUT}},
+    "application_name": "{{SERVICE_NAME}}",
+    "migrations": {
+      "apply": false,
+      "directory": "src/migrations"
+    }
+  }
+}

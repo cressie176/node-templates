@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx --watch index.ts",
     "test": "APP_ENV=test node --test --test-concurrency=1 --test-timeout=1000 --import tsx test/**/*.test.ts",
-    "test:match": "./scripts/test",
+    "test:match": "./bin/test",
     "build": "tsc",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."

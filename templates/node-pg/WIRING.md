@@ -1,0 +1,154 @@
+# PostgreSQL Template Wiring Guide
+
+This guide shows exactly how to wire the PostgreSQL layer into your service after the template files have been copied.
+
+## Files Added
+
+The PostgreSQL template adds these files to your project:
+
+- `src/infra/Postgres.ts`
+- `src/init/init-migrations.ts`
+- `src/migrations/001.create-nuke-function.sql`
+- `test-src/TestPostgres.ts`
+- `test/infra/Postgres.test.ts`
+- `docker/Dockerfile.postgres`
+- `docker/docker-compose.postgres.yml`
+
+Configuration and package.json are merged with base template files.
+
+## Step-by-Step Wiring
+
+### 1. Update `src/infra/Application.ts`
+
+**Add import:**
+```typescript
+import type Postgres from './Postgres.js';
+```
+
+**Update ApplicationConfig interface:**
+```typescript
+export interface ApplicationConfig {
+  postgres: Postgres;
+  server: WebServer;
+}
+```
+
+**Add property:**
+```typescript
+private readonly postgres: Postgres;
+```
+
+**Update constructor:**
+```typescript
+constructor({ postgres, server }: ApplicationConfig) {
+  this.postgres = postgres;
+  this.server = server;
+}
+```
+
+**Update start():**
+```typescript
+await this.postgres.start();
+await this.server.start();
+```
+
+**Update stop():**
+```typescript
+await this.server.stop();
+await this.postgres.stop();
+```
+
+### 2. Update `src/infra/WebServer.ts`
+
+**Add import:**
+```typescript
+import type Postgres from './Postgres.js';
+```
+
+**Update WebServerDependencies:**
+```typescript
+export interface WebServerDependencies {
+  config: WebServerConfig;
+  postgres: Postgres;
+}
+```
+
+**Update constructor:**
+```typescript
+constructor({ config, postgres }: WebServerDependencies) {
+  this.config = Object.assign({ host: '0.0.0.0' }, config);
+  this.app = new Hono();
+  this.app.onError(errorHandler);
+  this.app.route('/__', createStatusRoutes({ postgres }));
+}
+```
+
+### 3. Update `src/routes/status.ts`
+
+**Add imports:**
+```typescript
+import { ServiceUnavailableError } from '../errors/index.js';
+import type Postgres from '../infra/Postgres.js';
+```
+
+**Update function:**
+```typescript
+export default function createStatusRoutes({ postgres }: { postgres: Postgres }) {
+  const app = new Hono();
+
+  app.get('/health', async (c) => {
+    try {
+      await Promise.all([
+        postgres.test(),
+      ]);
+      return c.json({ message: 'OK' });
+    } catch (err) {
+      throw new ServiceUnavailableError({ message: 'Health check failed', cause: err as Error });
+    }
+  });
+
+  return app;
+}
+```
+
+### 4. Update `index.ts`
+
+**Add imports:**
+```typescript
+import Postgres from './src/infra/Postgres.js';
+import initMigrations from './src/init/init-migrations.js';
+```
+
+**After initLogging:**
+```typescript
+await initMigrations(config.postgres);
+```
+
+**Instantiate postgres:**
+```typescript
+const postgres = new Postgres({ config: config.postgres });
+const server = new WebServer({ config: config.server, postgres });
+const application = new Application({ postgres, server });
+```
+
+## Testing
+
+See `test/infra/Postgres.test.ts` for a complete example of testing with the postgres.
+
+**Key points:**
+- Use `TestPostgres` instead of `Postgres` for tests
+- Call `await postgres.nuke()` in `afterEach` to clean between tests
+- Start postgres in `before` and stop in `after`
+
+## Running the Postgres
+
+```bash
+docker compose up -d postgres
+docker compose --profile test up -d postgres-test
+npm run db:migrate
+docker compose down
+```
+
+## Configuration
+
+Postgres config has been merged into `config/*.json` files.
