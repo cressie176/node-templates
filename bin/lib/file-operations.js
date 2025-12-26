@@ -52,16 +52,15 @@ export function deepMerge(target, source) {
 
 export async function mergeJsonFiles(targetPath, sourcePath, values) {
   const targetContent = await readFile(targetPath, 'utf8');
-  const sourceContent = await readFile(sourcePath, 'utf8');
+  let sourceContent = await readFile(sourcePath, 'utf8');
 
-  let targetJson = JSON.parse(targetContent);
-  let sourceJson = JSON.parse(sourceContent);
+  // Replace placeholders BEFORE parsing
+  sourceContent = sourceContent.replaceAll(/\{\{(\w+)\}\}/g, (match, key) => {
+    return values[key] !== undefined ? values[key] : match;
+  });
 
-  for (const [key, value] of Object.entries(values)) {
-    const placeholder = `{{${key}}}`;
-    sourceContent.replaceAll(placeholder, value);
-  }
-  sourceJson = JSON.parse(sourceContent.replaceAll(/\{\{(\w+)\}\}/g, (match, key) => values[key] || match));
+  const targetJson = JSON.parse(targetContent);
+  const sourceJson = JSON.parse(sourceContent);
 
   const merged = deepMerge(targetJson, sourceJson);
   await writeFile(targetPath, JSON.stringify(merged, null, 2) + '\n');
