@@ -40,6 +40,13 @@ This project follows strict TypeScript configuration and uses Biome for linting/
 1. Pass TypeScript strict checks
 2. Follow clean code principles (clear naming, single responsibility, etc.)
 
+## Project Maintenance
+
+- **Remove .gitkeep files** when they are no longer needed
+  - .gitkeep files are placeholders to preserve empty directories in git
+  - When you add actual files to a directory containing a .gitkeep, remove the .gitkeep file
+  - Example: After adding a file to an empty directory, delete the .gitkeep in that directory
+
 ## Attitude
 
 - Taking great care to follow the instructions carefuly and without deviation
