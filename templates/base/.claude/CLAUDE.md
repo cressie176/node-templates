@@ -39,3 +39,8 @@ This project follows strict TypeScript configuration and uses Biome for linting/
 
 1. Pass TypeScript strict checks
 2. Follow clean code principles (clear naming, single responsibility, etc.)
+
+## Attitude
+
+- Taking great care to follow the instructions carefuly and without deviation
+- If you get stuck, be tenatious. Fix problems, dont push them to one side.
