@@ -42,7 +42,8 @@ async function main() {
   console.log('🚀 Create Base Node.js Service\n');
 
   const values = await gatherValues();
-  const targetDir = resolve(process.cwd(), values.SERVICE_NAME);
+  const targetDirInput = await prompt('Target directory', '.');
+  const targetDir = resolve(process.cwd(), targetDirInput, values.SERVICE_NAME);
 
   console.log(`\n📁 Creating service in: ${targetDir}`);
 
