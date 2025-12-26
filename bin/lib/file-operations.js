@@ -1,7 +1,7 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export async function copyDirectory(src, dest, values) {
+export async function copyDirectory(src, dest, values, skipPaths = []) {
   await mkdir(dest, { recursive: true });
 
   const entries = await readdir(src, { withFileTypes: true });
@@ -11,9 +11,13 @@ export async function copyDirectory(src, dest, values) {
 
     const srcPath = join(src, entry.name);
     const destPath = join(dest, entry.name);
+    const relativePath = srcPath.substring(src.length + 1);
+
+    // Check if this path should be skipped
+    if (skipPaths.some(skip => relativePath.startsWith(skip))) continue;
 
     if (entry.isDirectory()) {
-      await copyDirectory(srcPath, destPath, values);
+      await copyDirectory(srcPath, destPath, values, skipPaths);
     } else {
       await copyFileWithReplacements(srcPath, destPath, values);
     }

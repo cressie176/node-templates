@@ -130,9 +130,17 @@ async function main() {
   const targetDir = process.cwd();
 
   try {
-    console.log('\n📦 Adding node-pg template files');
     const pgPath = join(TEMPLATES_DIR, 'node-pg');
-    await copyDirectory(pgPath, targetDir, values);
+
+    console.log('\n📦 Merging configuration files');
+    for (const configFile of ['default.json', 'local.json', 'test.json']) {
+      const targetConfigPath = join(targetDir, 'config', configFile);
+      const sourceConfigPath = join(pgPath, 'config', configFile);
+      try {
+        await access(sourceConfigPath);
+        await mergeJsonFiles(targetConfigPath, sourceConfigPath, values);
+      } catch {}
+    }
 
     console.log('📦 Merging package.json dependencies');
     const packageJsonPath = join(targetDir, 'package.json');
@@ -142,15 +150,8 @@ async function main() {
       await mergeJsonFiles(packageJsonPath, layerPackageJsonPath, values);
     } catch {}
 
-    console.log('📦 Merging configuration files');
-    for (const configFile of ['default.json', 'local.json', 'test.json']) {
-      const targetConfigPath = join(targetDir, 'config', configFile);
-      const sourceConfigPath = join(pgPath, 'config', configFile);
-      try {
-        await access(sourceConfigPath);
-        await mergeJsonFiles(targetConfigPath, sourceConfigPath, values);
-      } catch {}
-    }
+    console.log('📦 Adding node-pg template files');
+    await copyDirectory(pgPath, targetDir, values, ['config', 'package.json'])
 
     console.log('📦 Merging docker-compose.yml');
     const targetDockerCompose = join(targetDir, 'docker', 'docker-compose.yml');
