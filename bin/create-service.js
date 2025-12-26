@@ -17,6 +17,7 @@ const PLACEHOLDERS = {
   AUTHOR: 'Author name',
   LICENSE: 'License',
   SERVER_PORT: 'Server port',
+  SERVER_PORT_TEST: 'Test server port',
   NODE_VERSION: 'Node.js version requirement',
 };
 
@@ -67,10 +68,8 @@ async function gatherValues() {
   values.AUTHOR = await prompt(PLACEHOLDERS.AUTHOR, process.env.USER || 'Unknown');
   values.LICENSE = await prompt(PLACEHOLDERS.LICENSE, 'ISC');
   values.SERVER_PORT = await prompt(PLACEHOLDERS.SERVER_PORT, '3000');
+  values.SERVER_PORT_TEST = await prompt(PLACEHOLDERS.SERVER_PORT_TEST, '3001');
   values.NODE_VERSION = await prompt(PLACEHOLDERS.NODE_VERSION, '>=22.0.0');
-
-  // Calculate test port as main port + 1
-  values.SERVER_PORT_TEST = String(Number.parseInt(values.SERVER_PORT, 10) + 1);
 
   return values;
 }
