@@ -1,5 +1,5 @@
 {
-  "name": "create-pg-service",
+  "name": "node-templates",
   "version": "1.0.0",
   "description": "Node.js service templates with TypeScript and Hono",
   "type": "module",
