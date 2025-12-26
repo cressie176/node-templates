@@ -11,6 +11,7 @@
   },
   "scripts": {
     "pg:migrate": "node --import tsx --eval \"import('./src/init/init-migrations.js')\"",
-    "pg:start": "docker-compose -f docker/docker-compose.postgres.yml up -d"
+    "pg:start": "docker-compose -f docker/docker-compose.postgres.yml up -d",
+    "pg:stop": "docker-compose -f docker/docker-compose.postgres.yml down"
   }
 }
