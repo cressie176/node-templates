@@ -139,7 +139,10 @@ async function main() {
       try {
         await access(sourceConfigPath);
         await mergeJsonFiles(targetConfigPath, sourceConfigPath, values);
-      } catch {}
+        console.log(`  ✓ Merged ${configFile}`);
+      } catch (error) {
+        console.log(`  ⊘ Skipped ${configFile} (${error.message})`);
+      }
     }
 
     console.log('📦 Merging package.json dependencies');
