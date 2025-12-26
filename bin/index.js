@@ -12,7 +12,7 @@ async function selectTemplate() {
   console.log('🚀 Node.js Service Templates\n');
   console.log('Available options:\n');
   console.log('  1. Create base service - Simple Node.js/TypeScript service with Hono');
-  console.log('  2. Add PostgreSQL layer - Add PostgreSQL to an existing base service\n');
+  console.log('  2. Add node-pg layer - Add node-pg to an existing base service\n');
 
   const selection = await prompt('Select option', '1');
   const choice = Number.parseInt(selection, 10);
