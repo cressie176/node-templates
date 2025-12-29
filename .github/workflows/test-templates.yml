@@ -1,0 +1,171 @@
+name: Test Templates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-base-template:
+    name: Test Base Template
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Create service from base template
+        run: |
+          echo -e "test-base-service\nA test service\nTest CI\nMIT\n3000\n3001\n>=22.0.0\n/tmp/test-base" | node bin/create-base-service.js
+
+      - name: Install dependencies
+        working-directory: /tmp/test-base
+        run: npm ci
+
+      - name: Run Biome linter
+        working-directory: /tmp/test-base
+        run: npm run lint
+
+      - name: Run TypeScript compiler
+        working-directory: /tmp/test-base
+        run: npm run build
+
+      - name: Run tests
+        working-directory: /tmp/test-base
+        run: npm test
+
+      - name: Start and stop service
+        working-directory: /tmp/test-base
+        run: |
+          # Start service in background
+          npm run dev > /tmp/service.log 2>&1 &
+          DEV_PID=$!
+
+          # Wait for service to start (max 30 seconds)
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/__/health > /dev/null 2>&1; then
+              echo "Service started successfully"
+              break
+            fi
+            if ! kill -0 $DEV_PID 2>/dev/null; then
+              echo "Service failed to start"
+              cat /tmp/service.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          # Verify health endpoint responded
+          HEALTH_RESPONSE=$(curl -s http://localhost:3000/__/health)
+          echo "Health check response: $HEALTH_RESPONSE"
+
+          # Stop service
+          kill $DEV_PID || true
+          wait $DEV_PID || true
+
+          echo "Service started and stopped successfully"
+
+  test-postgres-template:
+    name: Test Base + PostgreSQL Template
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_USER: testuser
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Create service from base template
+        run: |
+          echo -e "test-pg-service\nA test service with PostgreSQL\nTest CI\nMIT\n3000\n3001\n>=22.0.0\n/tmp/test-pg" | node bin/create-base-service.js
+
+      - name: Add PostgreSQL layer
+        run: |
+          echo -e "/tmp/test-pg\nlocalhost\n5432\n5433\ntestdb\ntestuser\ntestpassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
+
+      - name: Install dependencies
+        working-directory: /tmp/test-pg
+        run: npm ci
+
+      - name: Run Biome linter
+        working-directory: /tmp/test-pg
+        run: npm run lint
+
+      - name: Run TypeScript compiler
+        working-directory: /tmp/test-pg
+        run: npm run build
+
+      - name: Run tests
+        working-directory: /tmp/test-pg
+        run: npm test
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: testdb
+          PGUSER: testuser
+          PGPASSWORD: testpassword
+
+      - name: Start and stop service
+        working-directory: /tmp/test-pg
+        run: |
+          # Start service in background
+          npm run dev > /tmp/service-pg.log 2>&1 &
+          DEV_PID=$!
+
+          # Wait for service to start (max 30 seconds)
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/__/health > /dev/null 2>&1; then
+              echo "Service started successfully"
+              break
+            fi
+            if ! kill -0 $DEV_PID 2>/dev/null; then
+              echo "Service failed to start"
+              cat /tmp/service-pg.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          # Verify health endpoint responded
+          HEALTH_RESPONSE=$(curl -s http://localhost:3000/__/health)
+          echo "Health check response: $HEALTH_RESPONSE"
+
+          # Stop service
+          kill $DEV_PID || true
+          wait $DEV_PID || true
+
+          echo "Service started and stopped successfully"
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGDATABASE: testdb
+          PGUSER: testuser
+          PGPASSWORD: testpassword
