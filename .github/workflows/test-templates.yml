@@ -72,7 +72,7 @@ jobs:
           echo "Service started and stopped successfully"
 
   test-postgres-template:
-    name: Test Base + PostgreSQL Template
+    name: Test Base + Node-PG Template
     runs-on: ubuntu-latest
 
     steps:
