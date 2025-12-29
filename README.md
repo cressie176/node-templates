@@ -25,6 +25,35 @@ _(Coming soon)_ Extends the base template with PostgreSQL support, including con
 
 ## Using Templates
 
+### Interactive Installation
+
+Create a new service interactively:
+
+```bash
+# Clone the repository
+git clone https://github.com/cressie176/node-templates.git
+cd node-templates
+
+# Create a base service
+node bin/create-base-service.js
+
+# Or create with PostgreSQL support
+node bin/create-base-service.js
+node bin/add-node-pg-layer.js
+```
+
+### Non-Interactive Installation
+
+For automated/CI environments, pipe values to stdin:
+
+```bash
+# Base service (7 values: service name, description, author, license, port, test port, node version, directory)
+echo -e "my-service\nMy Service\nAuthor\nMIT\n3000\n3001\n>=22.0.0\n." | node bin/create-base-service.js
+
+# Add PostgreSQL layer (11 values: directory, host, port, test port, db name, user, password, min, max, idle timeout, connection timeout)
+echo -e ".\nlocalhost\n5432\n5433\nmydb\nmyuser\npassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
+```
+
 ### Manual Installation
 
 1. Copy the template directory to your project location:
@@ -54,12 +83,6 @@ _(Coming soon)_ Extends the base template with PostgreSQL support, including con
    ```bash
    npm run dev
    ```
-
-### Via npx (Coming Soon)
-
-```bash
-npx cressie176/create-pg-service my-service
-```
 
 ## Template Placeholders
 
@@ -98,6 +121,29 @@ template-name/
 ├── .gitignore
 └── README.md
 ```
+
+## Continuous Integration
+
+The templates are automatically tested on every push via GitHub Actions:
+
+### Test Base Template
+- Creates a service from the base template
+- Runs Biome linter and TypeScript compiler
+- Executes test suite
+- Starts service and verifies `/__/health` endpoint responds
+
+### Test Base + Node-PG Template
+- Creates a service with PostgreSQL layer
+- Builds custom PostgreSQL Docker image (with pg_cron and app.allow_nuke)
+- Runs Biome linter and TypeScript compiler
+- Executes full test suite with PostgreSQL integration
+- Starts service and verifies health endpoint
+
+### Performance Optimizations
+- Docker buildx cache for PostgreSQL image builds
+- npm node_modules caching for faster dependency installation
+
+This ensures all templates compile correctly, pass linting, and work as expected in a clean environment.
 
 ## Contributing
 
