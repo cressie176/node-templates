@@ -38,6 +38,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!**/node_modules", "!**/dist", "!**/coverage", "!**/*.log"]
+    "includes": ["**", "!**/node_modules", "!**/dist", "!**/coverage", "!**/*.log"],
+    "ignore": [".claude/settings*.json"]
   }
 }
