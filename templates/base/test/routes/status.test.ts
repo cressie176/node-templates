@@ -34,5 +34,5 @@ describe('Status Routes', () => {
       eq(status, 200);
       eq(body.message, 'OK');
     });
-  })
+  });
 });
