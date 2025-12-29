@@ -90,7 +90,7 @@ jobs:
 
       - name: Add PostgreSQL layer
         run: |
-          echo -e "/tmp/test-pg\nlocalhost\n5432\n5433\ntestdb\ntestuser\ntestpassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
+          echo -e "/tmp/test-pg\nlocalhost\n5432\n5432\ntestdb\ntestuser\ntestpassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
 
       - name: Build custom PostgreSQL image
         working-directory: /tmp/test-pg/docker
