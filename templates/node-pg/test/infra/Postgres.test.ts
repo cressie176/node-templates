@@ -1,5 +1,5 @@
-import { describe, it, before, afterEach, after } from 'node:test';
 import { equal as eq } from 'node:assert/strict';
+import { after, afterEach, before, describe, it } from 'node:test';
 import Configuration from '../../src/infra/Configuration.js';
 import initLogging from '../../src/init/init-logging.js';
 import initMigrations from '../../src/init/init-migrations.js';
