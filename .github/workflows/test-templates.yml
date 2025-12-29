@@ -117,8 +117,8 @@ jobs:
           docker buildx build \
             -f Dockerfile.postgres \
             -t test-postgres:latest \
-            --cache-from type=gha \
-            --cache-to type=gha,mode=max \
+            --cache-from type=gha,scope=postgres-build \
+            --cache-to type=gha,mode=max,scope=postgres-build \
             --load \
             .
 
