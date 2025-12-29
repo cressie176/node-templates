@@ -77,21 +77,6 @@ jobs:
     name: Test Base + PostgreSQL Template
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_PASSWORD: testpassword
-          POSTGRES_USER: testuser
-          POSTGRES_DB: testdb
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -110,6 +95,37 @@ jobs:
       - name: Add PostgreSQL layer
         run: |
           echo -e "/tmp/test-pg\nlocalhost\n5432\n5433\ntestdb\ntestuser\ntestpassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
+
+      - name: Build custom PostgreSQL image
+        working-directory: /tmp/test-pg/docker
+        run: docker build -f Dockerfile.postgres -t test-postgres:latest .
+
+      - name: Start PostgreSQL with pg_cron and app.allow_nuke
+        run: |
+          docker run -d \
+            --name test-postgres \
+            -e POSTGRES_USER=testuser \
+            -e POSTGRES_PASSWORD=testpassword \
+            -e POSTGRES_DB=testdb \
+            -e PGDATA=/tmp/pgdata \
+            -p 5432:5432 \
+            --tmpfs /tmp:rw,noexec,nosuid,size=1g \
+            test-postgres:latest \
+            postgres \
+            -c shared_preload_libraries=pg_cron \
+            -c cron.database_name=testdb \
+            -c app.allow_nuke=true
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..30}; do
+            if docker exec test-postgres pg_isready -U testuser > /dev/null 2>&1; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 1
+          done
 
       - name: Install dependencies
         working-directory: /tmp/test-pg
@@ -169,3 +185,7 @@ jobs:
           PGDATABASE: testdb
           PGUSER: testuser
           PGPASSWORD: testpassword
+
+      - name: Cleanup PostgreSQL container
+        if: always()
+        run: docker rm -f test-postgres || true
