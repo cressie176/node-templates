@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
-import { HealthCheckError } from '../domain/HealthCheckError.js';
+import { HealthCheckError } from '../errors/HealthCheckError.js';
 import { logger } from '../infra/Logger.js';
 
 export function errorHandler(err: Error & { code?: string }, c: Context) {

@@ -82,7 +82,8 @@ npm run lint:fix
 │   ├── local.json         # Local overrides (gitignored)
 │   └── test.json          # Test environment config
 ├── src/
-│   ├── domain/            # Domain models, errors, and business logic
+│   ├── domain/            # Domain models and business logic
+│   ├── errors/            # Error classes
 │   ├── infra/             # Infrastructure (Application, WebServer, Logger, etc.)
 │   ├── init/              # Initialization routines
 │   ├── middleware/        # HTTP middleware
