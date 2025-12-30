@@ -31,6 +31,31 @@ A minimal but complete Node.js + Hono web service template with:
 | `SERVER_PORT_TEST` | Test server port | `3001` | `3001` |
 | `NODE_VERSION` | Node.js version requirement | `>=22.0.0` | `>=22.0.0` |
 
+**Template structure:**
+
+```
+base/
+├── config/              # Configuration files
+├── src/
+│   ├── domain/         # Domain models
+│   ├── errors/         # Error classes
+│   ├── infra/          # Infrastructure (app, server, logger)
+│   ├── init/           # Initialization routines
+│   ├── middleware/     # HTTP middleware
+│   ├── routes/         # HTTP route handlers
+│   └── services/       # Service layer
+├── test/               # Tests
+├── test-src/           # Test utilities
+├── scripts/            # Helper scripts
+├── index.ts            # Entry point
+├── package.json
+├── tsconfig.json
+├── biome.json
+├── lefthook.yml
+├── .gitignore
+└── README.md
+```
+
 ### PostgreSQL Template (`templates/node-pg/`)
 
 Extends the base template with PostgreSQL support, including:
@@ -84,33 +109,6 @@ echo -e "my-service\nMy Service\nAuthor\nMIT\n3000\n3001\n>=22.0.0\n." | npx cre
 
 # Add PostgreSQL layer (11 values: directory, host, port, test port, db name, user, password, min, max, idle timeout, connection timeout)
 echo -e ".\nlocalhost\n5432\n5433\nmydb\nmyuser\npassword\n1\n10\n30000\n2000" | npx cressie176/node-templates add-node-pg-layer
-```
-
-## Template Structure
-
-Each template follows a consistent structure:
-
-```
-template-name/
-├── config/              # Configuration files
-├── src/
-│   ├── domain/         # Domain models
-│   ├── errors/         # Error classes
-│   ├── infra/          # Infrastructure (app, server, logger)
-│   ├── init/           # Initialization routines
-│   ├── middleware/     # HTTP middleware
-│   ├── routes/         # HTTP route handlers
-│   └── services/       # Service layer
-├── test/               # Tests
-├── test-src/           # Test utilities
-├── scripts/            # Helper scripts
-├── index.ts            # Entry point
-├── package.json
-├── tsconfig.json
-├── biome.json
-├── lefthook.yml
-├── .gitignore
-└── README.md
 ```
 
 ## Continuous Integration
