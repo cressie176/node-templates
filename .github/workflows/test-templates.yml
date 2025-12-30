@@ -22,7 +22,7 @@ jobs:
 
       - name: Create service from base template
         run: |
-          echo -e "test-base-service\nA test service\nTest CI\nMIT\n3000\n3001\n>=22.0.0\n/tmp/test-base" | node bin/create-base-service.js
+          echo -e "test-base-service\nA test service\nTest CI\ntest-user\nMIT\n3000\n3001\n>=22.0.0\n/tmp/test-base" | node bin/create-base-service.js
 
       - name: Cache npm dependencies
         uses: actions/cache@v4
@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: /tmp/test-base
-        run: npm ci
+        run: npm install
 
       - name: Run Biome linter
         working-directory: /tmp/test-base
@@ -97,7 +97,7 @@ jobs:
 
       - name: Create service from base template
         run: |
-          echo -e "test-pg-service\nA test service with PostgreSQL\nTest CI\nMIT\n3000\n3001\n>=22.0.0\n/tmp/test-pg" | node bin/create-base-service.js
+          echo -e "test-pg-service\nA test service with PostgreSQL\nTest CI\ntest-user\nMIT\n3000\n3001\n>=22.0.0\n/tmp/test-pg" | node bin/create-base-service.js
 
       - name: Add PostgreSQL layer
         run: |
@@ -151,7 +151,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: /tmp/test-pg
-        run: npm ci
+        run: npm install
 
       - name: Run Biome linter
         working-directory: /tmp/test-pg
