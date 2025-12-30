@@ -66,16 +66,12 @@ Extends the base template with PostgreSQL support, including:
 Create a new service interactively:
 
 ```bash
-# Clone the repository
-git clone https://github.com/cressie176/node-templates.git
-cd node-templates
-
 # Create a base service
-node bin/create-base-service.js
+npx cressie176/node-templates
 
 # Or create with PostgreSQL support
-node bin/create-base-service.js
-node bin/add-node-pg-layer.js
+npx cressie176/node-templates
+npx cressie176/node-templates add-node-pg-layer
 ```
 
 ### Non-Interactive Installation
