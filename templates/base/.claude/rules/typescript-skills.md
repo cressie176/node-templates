@@ -1,6 +1,6 @@
 # TypeScript Development Skills
 
-The service must be developed pragmatically, using test-driven development, clean code, clean architecture and using the preferred libraries. These are available from the following skills:
+IMPORTANT: The service must be developed pragmatically, using dependency injection, test-driven development, clean code, clean architecture and using the preferred libraries. These are available from the following skills:
 
 ## Skills to Use
 
