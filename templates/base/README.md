@@ -8,7 +8,7 @@
 - **Hono Web Framework** - Fast, lightweight web server with type safety
 - **Structured Logging** - LogTape integration with multiple formatters (JSON, ANSI, pretty)
 - **Configuration Management** - JSON-based config with environment-specific overrides
-- **Error Handling** - Comprehensive HTTP error classes with middleware
+- **Error Handling** - Application error framework with HTTP mapping middleware
 - **Lifecycle Management** - Graceful startup/shutdown with signal handling
 - **Testing** - Node.js test runner with integration test support
 - **Code Quality** - Biome for linting and formatting
@@ -35,7 +35,7 @@ Start the development server with hot reload:
 npm run dev
 ```
 
-The server will start on `http://localhost:3000`.
+The server will start on `http://localhost:{{SERVER_PORT}}`.
 
 ### Testing
 
@@ -82,8 +82,7 @@ npm run lint:fix
 │   ├── local.json         # Local overrides (gitignored)
 │   └── test.json          # Test environment config
 ├── src/
-│   ├── domain/            # Domain models and business logic
-│   ├── errors/            # Error classes
+│   ├── domain/            # Domain models, errors, and business logic
 │   ├── infra/             # Infrastructure (Application, WebServer, Logger, etc.)
 │   ├── init/              # Initialization routines
 │   ├── middleware/        # HTTP middleware
@@ -100,9 +99,10 @@ npm run lint:fix
 Configuration is loaded from JSON files in the `config/` directory:
 
 1. `default.json` - Base configuration
-2. `${APP_ENV}.json` - Environment-specific (e.g., `local.json`, `production.json`)
-3. `secrets.json` - Secrets (gitignored)
-4. `runtime.json` - Runtime overrides (gitignored)
+2. `local.json` - Local development overrides
+3. `${APP_ENV}.json` - Environment-specific (e.g., `production.json`, `staging.json`)
+4. `secrets.json` - Secrets (gitignored)
+5. `runtime.json` - Runtime overrides (gitignored)
 
 Set the `APP_ENV` environment variable to switch environments (defaults to `local`).
 
@@ -131,6 +131,8 @@ The template provides a clean separation between application errors and HTTP res
 - `HealthCheckError` (503) - Health check failure error
 
 The `ErrorHandler` middleware catches all errors and maps error codes to HTTP status codes. Application code throws `ApplicationError` instances, and the ErrorHandler translates them to appropriate HTTP responses.
+
+Internal server errors (500) have their messages masked to "Internal Server Error" to avoid leaking infrastructure details. All errors are logged with full details.
 
 To add custom errors, extend `ApplicationError` and add the mapping in `ErrorHandler`.
 

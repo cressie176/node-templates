@@ -5,6 +5,7 @@ node_modules/
 dist/
 
 # Configuration
+config/secrets.json
 config/runtime.json
 
 # Logs
