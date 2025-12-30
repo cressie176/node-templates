@@ -125,6 +125,29 @@ const server = new WebServer({ config: config.server, postgres });
 const application = new Application({ postgres, server });
 ```
 
+### 5. Update `.github/workflows/ci.yml`
+
+**Add step after "Setup Node.js":**
+```yaml
+      - name: Start PostgreSQL
+        run: docker compose -f docker/docker-compose.postgres.yml up -d postgres-test
+```
+
+**Add to "Run tests" step:**
+```yaml
+      - name: Run tests
+        run: npm test
+        env:
+          APP_ENV: test
+```
+
+**Add step at the end (after "Run tests"):**
+```yaml
+      - name: Stop PostgreSQL
+        if: always()
+        run: docker compose -f docker/docker-compose.postgres.yml down
+```
+
 ## Testing
 
 See `test/infra/Postgres.test.ts` for a complete example of testing with the postgres.
