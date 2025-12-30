@@ -87,7 +87,7 @@ constructor({ config, postgres }: WebServerParams) {
 
 **Add imports:**
 ```typescript
-import { HealthCheckError } from '../errors/HealthCheckError.js';
+import { HealthCheckError } from '../domain/errors/index.js';
 import type Postgres from '../infra/Postgres.js';
 ```
 

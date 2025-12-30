@@ -86,7 +86,7 @@ npm run lint:fix
 │   └── test.json          # Test environment config
 ├── src/
 │   ├── domain/            # Domain models and business logic
-│   ├── errors/            # Error classes
+│   │   └── errors/        # Error classes
 │   ├── infra/             # Infrastructure (Application, WebServer, Logger, etc.)
 │   ├── init/              # Initialization routines
 │   ├── middleware/        # HTTP middleware
