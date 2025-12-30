@@ -19,9 +19,45 @@ A minimal but complete Node.js + Hono web service template with:
 
 **Use when:** You need a lightweight HTTP service without database dependencies.
 
-### PostgreSQL Template (`templates/pg/`)
+**Configuration variables:**
 
-_(Coming soon)_ Extends the base template with PostgreSQL support, including connection pooling, migrations, and database lifecycle management.
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `SERVICE_NAME` | Service/package name | `my-service` | `my-api-service` |
+| `SERVICE_DESCRIPTION` | Brief description | `A Node.js service` | `REST API for user management` |
+| `AUTHOR` | Author name | `$USER` | `John Smith` |
+| `LICENSE` | License type | `ISC` | `MIT` |
+| `SERVER_PORT` | HTTP server port | `3000` | `3000` |
+| `SERVER_PORT_TEST` | Test server port | `3001` | `3001` |
+| `NODE_VERSION` | Node.js version requirement | `>=22.0.0` | `>=22.0.0` |
+
+### PostgreSQL Template (`templates/node-pg/`)
+
+Extends the base template with PostgreSQL support, including:
+
+- PostgreSQL connection pool (node-postgres)
+- Migration system with automatic/manual execution modes
+- Database lifecycle management (start/stop/test/nuke)
+- Docker Compose setup with custom PostgreSQL image (pg_cron support)
+- Test infrastructure with database cleanup utilities
+- Health check integration
+
+**Use when:** Your service needs PostgreSQL database support with robust connection pooling and migration management.
+
+**Configuration variables:**
+
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `PG_HOST` | PostgreSQL host | `localhost` | `localhost` |
+| `PG_PORT` | PostgreSQL port | `5432` | `5432` |
+| `PG_PORT_TEST` | Test PostgreSQL port | `5433` | `5433` |
+| `PG_NAME` | Database name | `{SERVICE_NAME}` | `my-api-service` |
+| `PG_USER` | Database user | `{SERVICE_NAME}` | `my-api-service` |
+| `PG_PASSWORD` | Database password | `password` | `password` |
+| `PG_POOL_MIN` | Min pool connections | `1` | `1` |
+| `PG_POOL_MAX` | Max pool connections | `10` | `10` |
+| `PG_IDLE_TIMEOUT` | Idle timeout (ms) | `30000` | `30000` |
+| `PG_CONNECTION_TIMEOUT` | Connection timeout (ms) | `2000` | `2000` |
 
 ## Using Templates
 
@@ -53,47 +89,6 @@ echo -e "my-service\nMy Service\nAuthor\nMIT\n3000\n3001\n>=22.0.0\n." | node bi
 # Add PostgreSQL layer (11 values: directory, host, port, test port, db name, user, password, min, max, idle timeout, connection timeout)
 echo -e ".\nlocalhost\n5432\n5433\nmydb\nmyuser\npassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
 ```
-
-### Manual Installation
-
-1. Copy the template directory to your project location:
-   ```bash
-   cp -r templates/base/ /path/to/your/project
-   cd /path/to/your/project
-   ```
-
-2. Replace placeholders in the files:
-   - `{{SERVICE_NAME}}` - Your service name
-   - `{{SERVICE_DESCRIPTION}}` - Brief description
-   - `{{AUTHOR}}` - Your name
-   - `{{LICENSE}}` - License type
-
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-4. Initialize git:
-   ```bash
-   git init
-   lefthook install
-   ```
-
-5. Start development:
-   ```bash
-   npm run dev
-   ```
-
-## Template Placeholders
-
-The following placeholders should be replaced when creating a new project:
-
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{SERVICE_NAME}}` | Service/package name | `my-api-service` |
-| `{{SERVICE_DESCRIPTION}}` | Brief description | `REST API for user management` |
-| `{{AUTHOR}}` | Author name | `John Smith` |
-| `{{LICENSE}}` | License type | `MIT` |
 
 ## Template Structure
 
