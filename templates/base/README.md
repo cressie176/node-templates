@@ -125,15 +125,14 @@ Returns service health status.
 
 ## Error Handling
 
-The template includes common HTTP error classes:
+The template provides a clean separation between application errors and HTTP responses:
 
-- `ApplicationError` (500) - Base error class
-- `BadRequestError` (400) - Invalid request
-- `NotFoundError` (404) - Resource not found
-- `ConflictError` (409) - Resource conflict
-- `ServiceUnavailableError` (503) - Service unavailable
+- `ApplicationError` - Base error class with `code` and `cause` properties
+- `HealthCheckError` (503) - Health check failure error
 
-All errors are automatically caught and formatted by the error handler middleware.
+The `ErrorHandler` middleware catches all errors and maps error codes to HTTP status codes. Application code throws `ApplicationError` instances, and the ErrorHandler translates them to appropriate HTTP responses.
+
+To add custom errors, extend `ApplicationError` and add the mapping in `ErrorHandler`.
 
 ## License
 
