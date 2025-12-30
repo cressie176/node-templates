@@ -25,9 +25,9 @@ Configuration and package.json are merged with base template files.
 import type Postgres from './Postgres.js';
 ```
 
-**Update ApplicationConfig interface:**
+**Update ApplicationParams interface:**
 ```typescript
-export interface ApplicationConfig {
+export interface ApplicationParams {
   postgres: Postgres;
   server: WebServer;
 }
@@ -40,7 +40,7 @@ private readonly postgres: Postgres;
 
 **Update constructor:**
 ```typescript
-constructor({ postgres, server }: ApplicationConfig) {
+constructor({ postgres, server }: ApplicationParams) {
   this.postgres = postgres;
   this.server = server;
 }
@@ -65,9 +65,9 @@ await this.postgres.stop();
 import type Postgres from './Postgres.js';
 ```
 
-**Update WebServerDependencies:**
+**Update WebServerParams:**
 ```typescript
-export interface WebServerDependencies {
+export interface WebServerParams {
   config: WebServerConfig;
   postgres: Postgres;
 }
@@ -75,7 +75,7 @@ export interface WebServerDependencies {
 
 **Update constructor:**
 ```typescript
-constructor({ config, postgres }: WebServerDependencies) {
+constructor({ config, postgres }: WebServerParams) {
   this.config = Object.assign({ host: '0.0.0.0' }, config);
   this.app = new Hono();
   this.app.onError(errorHandler);

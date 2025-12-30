@@ -10,6 +10,10 @@ export interface WebServerConfig {
   port: number;
 }
 
+export interface WebServerParams {
+  config: WebServerConfig;
+}
+
 export default class WebServer {
   private server?: ServerType;
   private readonly app: Hono;
@@ -17,7 +21,7 @@ export default class WebServer {
   private readonly commandQueue = new CommandQueue();
   private started = false;
 
-  constructor({ config }: { config: WebServerConfig }) {
+  constructor({ config }: WebServerParams) {
     this.config = Object.assign({ host: '0.0.0.0' }, config);
     this.app = new Hono();
     this.app.onError(errorHandler);

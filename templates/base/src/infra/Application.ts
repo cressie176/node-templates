@@ -6,12 +6,16 @@ export enum Events {
   LOG = 'LOG',
 }
 
+export interface ApplicationParams {
+  server: WebServer;
+}
+
 export default class Application {
   private readonly server: WebServer;
   private readonly commandQueue = new CommandQueue();
   private started = false;
 
-  constructor({ server }: { server: WebServer }) {
+  constructor({ server }: ApplicationParams) {
     this.server = server;
   }
 
