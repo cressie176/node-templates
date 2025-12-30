@@ -87,7 +87,7 @@ constructor({ config, postgres }: WebServerDependencies) {
 
 **Add imports:**
 ```typescript
-import { ServiceUnavailableError } from '../errors/index.js';
+import { HealthCheckError } from '../domain/HealthCheckError.js';
 import type Postgres from '../infra/Postgres.js';
 ```
 
@@ -103,7 +103,7 @@ export default function createStatusRoutes({ postgres }: { postgres: Postgres })
       ]);
       return c.json({ message: 'OK' });
     } catch (err) {
-      throw new ServiceUnavailableError({ message: 'Health check failed', cause: err as Error });
+      throw new HealthCheckError('Health check failed', err as Error);
     }
   });
 
