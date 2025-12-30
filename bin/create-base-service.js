@@ -15,6 +15,7 @@ const BASE_PLACEHOLDERS = {
   SERVICE_NAME: 'Service name (package name)',
   SERVICE_DESCRIPTION: 'Service description',
   AUTHOR: 'Author name',
+  GITHUB_USERNAME: 'GitHub username',
   LICENSE: 'License',
   SERVER_PORT: 'Server port',
   SERVER_PORT_TEST: 'Test server port',
@@ -30,6 +31,7 @@ async function gatherValues() {
   values.SERVICE_NAME = await prompt(BASE_PLACEHOLDERS.SERVICE_NAME, 'my-service');
   values.SERVICE_DESCRIPTION = await prompt(BASE_PLACEHOLDERS.SERVICE_DESCRIPTION, 'A Node.js service');
   values.AUTHOR = await prompt(BASE_PLACEHOLDERS.AUTHOR, process.env.USER || 'Unknown');
+  values.GITHUB_USERNAME = await prompt(BASE_PLACEHOLDERS.GITHUB_USERNAME, process.env.USER || 'username');
   values.LICENSE = await prompt(BASE_PLACEHOLDERS.LICENSE, 'ISC');
   values.SERVER_PORT = await prompt(BASE_PLACEHOLDERS.SERVER_PORT, '3000');
   values.SERVER_PORT_TEST = await prompt(BASE_PLACEHOLDERS.SERVER_PORT_TEST, '3001');

@@ -1,5 +1,7 @@
 # {{SERVICE_NAME}}
 
+[![CI](https://github.com/{{GITHUB_USERNAME}}/{{SERVICE_NAME}}/workflows/CI/badge.svg)](https://github.com/{{GITHUB_USERNAME}}/{{SERVICE_NAME}}/actions)
+
 {{SERVICE_DESCRIPTION}}
 
 ## Features
@@ -13,6 +15,7 @@
 - **Testing** - Node.js test runner with integration test support
 - **Code Quality** - Biome for linting and formatting
 - **Git Hooks** - Lefthook for pre-commit linting and testing
+- **CI/CD** - GitHub Actions workflow for automated testing and builds
 
 ## Getting Started
 
