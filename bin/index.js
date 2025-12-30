@@ -47,11 +47,26 @@ async function runScript(scriptName) {
 
 async function main() {
   try {
-    const template = await selectTemplate();
+    const args = process.argv.slice(2);
+    const command = args[0];
 
-    const scriptName = template === 'base'
-      ? 'create-base-service.js'
-      : 'add-node-pg-layer.js';
+    let scriptName;
+
+    if (command === 'create-base-service') {
+      scriptName = 'create-base-service.js';
+    } else if (command === 'add-node-pg-layer') {
+      scriptName = 'add-node-pg-layer.js';
+    } else if (!command) {
+      // Interactive mode - no command provided
+      const template = await selectTemplate();
+      scriptName = template === 'base'
+        ? 'create-base-service.js'
+        : 'add-node-pg-layer.js';
+    } else {
+      console.error(`Unknown command: ${command}`);
+      console.error('Usage: node-templates [create-base-service|add-node-pg-layer]');
+      process.exit(1);
+    }
 
     await runScript(scriptName);
   } catch (error) {

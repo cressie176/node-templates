@@ -84,10 +84,10 @@ For automated/CI environments, pipe values to stdin:
 
 ```bash
 # Base service (7 values: service name, description, author, license, port, test port, node version, directory)
-echo -e "my-service\nMy Service\nAuthor\nMIT\n3000\n3001\n>=22.0.0\n." | node bin/create-base-service.js
+echo -e "my-service\nMy Service\nAuthor\nMIT\n3000\n3001\n>=22.0.0\n." | npx cressie176/node-templates create-base-service
 
 # Add PostgreSQL layer (11 values: directory, host, port, test port, db name, user, password, min, max, idle timeout, connection timeout)
-echo -e ".\nlocalhost\n5432\n5433\nmydb\nmyuser\npassword\n1\n10\n30000\n2000" | node bin/add-node-pg-layer.js
+echo -e ".\nlocalhost\n5432\n5433\nmydb\nmyuser\npassword\n1\n10\n30000\n2000" | npx cressie176/node-templates add-node-pg-layer
 ```
 
 ## Template Structure
