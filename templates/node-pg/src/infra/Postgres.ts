@@ -29,6 +29,9 @@ export default class Postgres {
     this.pool.on('error', (err) => {
       logger.error('Unexpected postgres error', { err });
     });
+    this.pool.on('connect', (client) => {
+      client.on('notice', ({ message }) => logger.info('PostgreSQL NOTICE', { message }));
+    });
     await this.test();
   }
 
