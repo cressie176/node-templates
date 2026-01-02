@@ -127,13 +127,15 @@ const application = new Application({ postgres, server });
 
 ### 5. Update `.github/workflows/ci.yml`
 
-**Add step after "Setup Node.js":**
+The CI workflow needs to start PostgreSQL before tests and stop it after. Use `docker compose` (not `docker-compose`) for these steps.
+
+**Add step after "Install dependencies" (before "Run Biome linter"):**
 ```yaml
       - name: Start PostgreSQL
         run: docker compose -f docker/docker-compose.postgres.yml up -d postgres-test
 ```
 
-**Add to "Run tests" step:**
+**Update "Run tests" step to include APP_ENV:**
 ```yaml
       - name: Run tests
         run: npm test
@@ -141,12 +143,14 @@ const application = new Application({ postgres, server });
           APP_ENV: test
 ```
 
-**Add step at the end (after "Run tests"):**
+**Add step at the very end (after "Run tests") to ensure cleanup:**
 ```yaml
       - name: Stop PostgreSQL
         if: always()
         run: docker compose -f docker/docker-compose.postgres.yml down
 ```
+
+The `if: always()` ensures PostgreSQL stops even if tests fail.
 
 ## Testing
 
@@ -182,3 +186,7 @@ Postgres config has been merged into `config/*.json` files.
 - Ideally run migrations pre-deployment using: `npm run pg:migrate`
 - This runs the `bin/migrate.ts` script which applies migrations then exits
 - Default config has `migrations.apply: false`
+
+## Completion
+
+Once you have completed the wiring steps above and verified everything is working by running the tests (`npm test`), **delete this WIRING.md file**.

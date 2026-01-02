@@ -129,7 +129,7 @@ Returns service health status.
 
 ## Error Handling
 
-The template provides a clean separation between application errors and HTTP responses:
+The service provides a clean separation between application errors and HTTP responses:
 
 - `ApplicationError` - Base error class with `code` and `cause` properties
 - `HealthCheckError` (503) - Health check failure error
