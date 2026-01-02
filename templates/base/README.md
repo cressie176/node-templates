@@ -54,6 +54,12 @@ Run specific tests:
 npm run test:match <pattern>
 ```
 
+Run tests with coverage:
+
+```bash
+npm run test:coverage
+```
+
 ### Building
 
 Build for production:
