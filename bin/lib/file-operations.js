@@ -10,7 +10,9 @@ export async function copyDirectory(src, dest, values, skipPaths = []) {
     if (entry.name.startsWith('.template-meta')) continue;
 
     const srcPath = join(src, entry.name);
-    const destPath = join(dest, entry.name);
+    // Rename 'gitignore' to '.gitignore' during copy (npm excludes .gitignore from packages)
+    const destName = entry.name === 'gitignore' ? '.gitignore' : entry.name;
+    const destPath = join(dest, destName);
     const relativePath = srcPath.substring(src.length + 1);
 
     // Check if this path should be skipped
