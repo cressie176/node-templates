@@ -2,7 +2,6 @@ import { equal as eq } from 'node:assert/strict';
 import { after, afterEach, before, describe, it } from 'node:test';
 import Configuration from '../../src/infra/Configuration.js';
 import initLogging from '../../src/init/init-logging.js';
-import initMigrations from '../../src/init/init-migrations.js';
 import TestPostgres from '../../test-src/TestPostgres.js';
 
 describe('Postgres', () => {
@@ -12,7 +11,6 @@ describe('Postgres', () => {
   before(async () => {
     config = Configuration.load(['config/default.json', 'config/local.json', 'config/test.json']);
     await initLogging(config.logging);
-    await initMigrations(config.postgres);
 
     postgres = new TestPostgres({ config: config.postgres });
   });

@@ -1,8 +1,15 @@
+import marv from 'marv/api/promise';
+import driver from 'marv-pg-driver';
 import pg from 'pg';
 import CommandQueue from './CommandQueue.js';
 import { logger } from './Logger.js';
 
-export type PostgresConfig = pg.PoolConfig;
+export type PostgresConfig = pg.PoolConfig & {
+  migrations?: {
+    apply: boolean;
+    directory: string;
+  };
+};
 
 export default class Postgres {
   protected pool?: pg.Pool;
@@ -19,6 +26,7 @@ export default class Postgres {
       if (this.started) return;
       logger.info('Starting postgres');
       await this.startPgPool();
+      if (this.config.migrations?.apply) await this.runMigrations();
       this.started = true;
       logger.info('Postgres started');
     });
@@ -64,5 +72,24 @@ export default class Postgres {
     } finally {
       client.release();
     }
+  }
+
+  private async runMigrations(): Promise<void> {
+    logger.info('Running postgres migrations');
+
+    const marvDriver = driver({
+      connection: {
+        host: this.config.host,
+        port: this.config.port,
+        database: this.config.database,
+        user: this.config.user,
+        password: this.config.password,
+      },
+    });
+
+    const migrations = await marv.scan(this.config.migrations.directory);
+    await marv.migrate(migrations, marvDriver);
+
+    logger.info('Postgres migrations completed');
   }
 }

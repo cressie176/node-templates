@@ -166,8 +166,12 @@ See `test/infra/Postgres.test.ts` for a complete example of testing with the pos
 ```bash
 docker compose up -d postgres
 docker compose --profile test up -d postgres-test
-npm run pg:migrate
 docker compose down
+```
+
+If migrations are disabled in your config (`migrations.apply: false`), run them manually:
+```bash
+npm run pg:migrate
 ```
 
 ## Configuration
@@ -176,16 +180,21 @@ Postgres config has been merged into `config/*.json` files.
 
 ### Migration Strategy
 
-**Local development:**
-- Migrations run automatically on application start for convenience
-- Configured in `config/local.json` with `migrations.apply: true`
+Migrations are controlled by the `migrations.apply` config flag:
 
-**Production/staging environments:**
-- Migrations should ideally NOT run on application start
-- Long-running migrations (indexes, columns with defaults) can block health checks and cause rollbacks
-- Ideally run migrations pre-deployment using: `npm run pg:migrate`
-- This runs the `bin/migrate.ts` script which applies migrations then exits
+**When enabled (`migrations.apply: true`):**
+- Migrations run automatically during `postgres.start()`
+- Convenient for local development
+- Migrations complete before the component is marked as started
+
+**When disabled (`migrations.apply: false`):**
+- Migrations do NOT run automatically
+- Recommended for production/staging environments
+- Run migrations pre-deployment using: `npm run pg:migrate`
+- This avoids long-running migrations blocking health checks and causing rollbacks
 - Default config has `migrations.apply: false`
+
+The Postgres component respects the config flag and runs migrations at the appropriate time in the component lifecycle.
 
 ## Completion
 
